@@ -1,0 +1,124 @@
+{% comment %} {% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+   <div class="d-flex row justify-content-center align-items-center py-md-5" style="min-height: 90vh;">
+    <div class="col-6">
+        <form action="." method="POST">
+            <h4>Enter Amount</h4>
+            <hr>
+            {% csrf_token %}
+            {{ payment_form.as_p }}
+            {{payment_form|crispy}}
+            <p>
+                <input type="submit" value="submit">
+            </p>
+        </form>
+   </div>
+</div>
+{% endblock content %} {% endcomment %}
+
+{% comment %} {% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center py-5" style="min-height: 90vh;">
+        <div class="col-md-6">
+            <h4 class="text-center mb-4">Enter Amount</h4>
+            {% csrf_token %}
+            <!-- Form -->
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                
+                <!-- Render Form -->
+                {{ payment_form|crispy }}
+                
+                
+                <!-- Submit Button -->
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg" aria-label="Submit Payment">
+                        Submit
+                    </button>
+                </div>
+            </form>
+
+            <!-- Error Debugging (Optional for Development) -->
+            {% if form.errors %}
+            <div class="alert alert-danger mt-4">
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %} {% endcomment %}
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Container for Flexbox Centering -->
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center py-5" style="min-height: 100vh; background-color: orange;">
+        <div class="col-md-6 col-12">
+            <form method="POST" class="form-container">
+                {% csrf_token %}
+                
+                <!-- Title -->
+                <h4 class="text-center text-white mb-4">Enter Payment Details</h4>
+                
+                <!-- Customer Name -->
+                <div class="form-group mb-3">
+                    <label for="customer_name" class="form-label text-white">Customer Name</label>
+                    <input type="text" id="customer_name" name="customer_name" class="form-control" required>
+                </div>
+                
+                <!-- Customer Phone -->
+                <div class="form-group mb-3">
+                    <label for="customer_phone" class="form-label text-white">Customer Phone</label>
+                    <input type="text" id="customer_phone" name="customer_phone" class="form-control" required>
+                </div>
+                
+                <!-- Amount -->
+                <div class="form-group mb-3">
+                    <label for="amount" class="form-label text-white">Amount</label>
+                    <input type="number" id="amount" name="amount" class="form-control" required>
+                </div>
+                
+                <!-- Currency (Dynamically loaded) -->
+                <div class="form-group mb-3">
+                    <label for="currency" class="form-label text-white">Currency</label>
+                    <select id="currency" name="currency" class="form-control" required>
+                        {% for value, display in currencies %}
+                            <option value="{{ value }}">{{ display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Email -->
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label text-white">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-dark btn-lg">Submit Payment</button>
+                </div>
+
+                {% if error %}
+                    <div class="alert alert-danger mt-3">
+                        <strong>Error: </strong>{{ error }}
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

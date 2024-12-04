@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center py-5" style="min-height: 90vh;">
+        <div class="col-md-6">
+            <h4 class="text-center mb-4">Enter Amount</h4>
+            {% csrf_token %}
+            <!-- Form -->
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                
+                <!-- Render Form -->
+                {{ form|crispy }}
+                
+                
+                <!-- Submit Button -->
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg" aria-label="Submit Payment">
+                        Submit
+                    </button>
+                </div>
+            </form>
+
+            <!-- Error Debugging (Optional for Development) -->
+            {% if form.errors %}
+            <div class="alert alert-danger mt-4">
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

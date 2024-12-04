@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Payment</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap 5.3.3 (Recommended) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    </head>
+    <body>
+        <!-- Main Content -->
+        {% block content %}
+        {% endblock content %}
+
+        
+    </body>
+</html>
+
+
+
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+   <div class="d-flex row justify-content-center align-items-center py-md-5" style="min-height: 90vh;">
+    <div class="col-6">
+        <form action="." method="POST">
+            {% csrf_token %}
+            {{}}
+        </form>
+   </div>
+</div>
+{% endblock content %}
+
+
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center py-5" style="min-height: 90vh;">
+        <div class="col-md-6">
+            <h4 class="text-center mb-4">Make Payment: {{ payment.amount }}</h4>
+            
+            <!-- CSRF Token -->
+            {% csrf_token %}
+            
+            <!-- Flutterwave Payment Button -->
+            <script src="https://checkout.flutterwave.com/v3.js"></script>
+            <button class="btn btn-large btn-success" onclick="payWithFlutterwave()" id="django-payment-button">Make Payment</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function payWithFlutterwave() {
+        // Populate payment data dynamically from context variables
+        let amount = "{{ payment.amount }}";
+        let currency = "{{ payment.currency }}";
+        let email = "{{ payment.email }}";
+        let tx_ref = "{{ payment.ref }}"; // Ensure 'payment.ref' is passed in context
+        let public_key = "{{ flutterwave_pub_key }}";
+
+        // Call the Flutterwave Checkout
+        FlutterwaveCheckout({
+            public_key: public_key,
+            tx_ref: tx_ref,
+            amount: amount,
+            currency: currency,
+            customer: {
+                email: email,
+                name: "{{ payment.name }}", // Optional: Customer name if provided
+                phone_number: "{{ payment.phone_number }}" // Optional: Phone number if provided
+            },
+            customizations: {
+                title: "Your Payment Title", // Customize this as per your need
+                description: "Payment for your order",
+                logo: "" // Replace with your logo URL
+            },
+            callback: function(response) {
+                // Redirect to the verification URL after successful payment
+                window.location.href = "{% url 'verify-payment' payment.ref %}";
+            },
+            onclose: function() {
+                alert("Payment was not completed. Please try again.");
+            },
+        });
+    }
+</script>
+{% endblock content %}

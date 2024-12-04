@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center py-5" style="min-height: 90vh;">
+        <div class="col-md-6">
+            <h4 class="text-center mb-4">Make Payment: {{ payment.amount }}</h4>
+            
+            <!-- CSRF Token -->
+            {% csrf_token %}
+            
+            <!-- Flutterwave Payment Button -->
+            <script src="https://checkout.flutterwave.com/v3.js"></script>
+            <button class="btn btn-large btn-success" onclick="payWithFlutterwave()" id="django-payment-button">Make Payment</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function payWithFlutterwave() {
+        // Populate payment data dynamically from context variables
+        let amount = "{{ payment.amount }}";
+        let currency = "{{ payment.currency }}";
+        let email = "{{ payment.email }}";
+        let tx_ref = "{{ payment.ref }}"; // Ensure 'payment.ref' is passed in context
+        let public_key = "{{ flutterwave_pub_key }}";
+
+        // Call the Flutterwave Checkout
+        FlutterwaveCheckout({
+            public_key: public_key,
+            tx_ref: tx_ref,
+            amount: amount,
+            currency: currency,
+            customer: {
+                email: email,
+                name: "{{ payment.name }}", // Optional: Customer name if provided
+                phone_number: "{{ payment.phone_number }}" // Optional: Phone number if provided
+            },
+            customizations: {
+                title: "Your Payment Title", // Customize this as per your need
+                description: "Payment for your order",
+                logo: "" // Replace with your logo URL
+            },
+            callback: function(response) {
+                // Redirect to the verification URL after successful payment
+                window.location.href = "{% url 'verify-payment' payment.ref %}";
+            },
+            onclose: function() {
+                alert("Payment was not completed. Please try again.");
+            },
+        });
+    }
+</script>
+{% endblock content %}
